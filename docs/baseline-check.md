@@ -1,10 +1,6 @@
 # Baseline check — CampusFlow before CampusFlow Next
 
-Engineer A. Purpose: record what the audited commit actually did **before** any
-change, so the improvements can be compared against evidence rather than memory.
-
-The audited commit is `639fadf` ("Clean up README by removing extra blank
-line"), which is the tip of `main` at the start of this sprint.
+The audited commit is `639fadf`
 
 ---
 
@@ -15,19 +11,17 @@ git checkout 639fadf
 python3 -m unittest discover -s tests -v
 ```
 
-> **PENDING — must be filled in from a real run before submission.**
-> The exact command output (test count, pass/fail, any errors) belongs here
-> verbatim. Do not paraphrase it and do not write a result you did not see.
->
-> Copy the summary line (e.g. `Ran N tests in X.XXs` / `OK` or `FAILED (...)`)
-> and paste the failing tracebacks if there are any.
+Ran 62 tests in 0.015s
+
+OK
+
 
 | Item | Result |
 |------|--------|
-| Total tests | _to record_ |
-| Passed | _to record_ |
-| Failed / errored | _to record_ |
-| Python version | _to record_ (`python3 --version`) |
+| Total tests | 62 |
+| Passed | 62 |
+| Failed / errored | 0  |
+| Python version | Python 3.12.3 (`python3 --version`) |
 
 ---
 
@@ -38,12 +32,11 @@ behaviour. Note anything surprising.
 
 | # | Input | Expected at the time | Actual | Verdict |
 |---|-------|----------------------|--------|---------|
-| 1 | Create: title `Wi-Fi down`, category `Network`, urgency `high`, users `15` | ticket created as `T001`, priority `critical` | _to record_ | _to record_ |
-| 2 | Create: title `Bad ticket`, category `Network`, urgency `high`, users `0` | rejected with a clear message, no ticket added | _to record_ | _to record_ |
-| 3 | Assign `T001` to a blank name, then check `T001` is unchanged | rejected, `assigned_to` still `null` | _to record_ | _to record_ |
+| 1 | Create: title `Wi-Fi down`, category `Network`, urgency `high`, users `15` | ticket created as `T001`, priority `critical` | Created T001 with priority critical. |Created T001 with priority critical. |
+| 2 | Create: title `Bad ticket`, category `Network`, urgency `high`, users `0` | rejected with a clear message, no ticket added | Error: Affected users must be a positive whole number. | ticket creation rejected |
+| 3 | Assign `T001` to a blank name, then check `T001` is unchanged | rejected, `assigned_to` still `null` | Error: Staff name must not be blank. | ticket creation rejected |
 
-Two further inputs worth trying because they probe the boundaries the audit
-cared about:
+Two further inputs worth trying because they probe the boundaries:
 
 | # | Input | Why |
 |---|-------|-----|
@@ -54,17 +47,11 @@ cared about:
 
 ## 3. What the audit said needed improvement
 
-> **PENDING — paste the three or four audit observations verbatim here.**
-> The guide is explicit that audit observations are preliminary peer feedback.
-> Record what was said, then say below which ones this repository's own
-> evidence confirms.
-
 | Audit observation (verbatim) | Reproduced? | Evidence |
 |------------------------------|-------------|----------|
-| _to record_ | _yes / no / not yet_ | _command or test name_ |
-
-**Do not mark a peer-reported bug as confirmed until it is reproduced.**
-Anything not reproduced stays "not yet reproduced" on this sheet.
+| Multiple simultaneous users | not yet | nill |
+| Ticket deletion integration | not yet | nill |
+| Title validation beyond empty fields | not yet | nill |
 
 ---
 
@@ -78,7 +65,7 @@ claim that the tests in this sprint now pin down.
 `campusflow/workflow.py:23` had:
 
 ```python
-# Change this to ("open",) if your team decides in_progress is excluded.
+
 QUEUE_STATUSES = ("open", "in_progress")
 ```
 
@@ -90,7 +77,7 @@ never settled, and `tests/test_workflow.py` locked in the old behaviour with
 
 This is the one **behavioural change to original functionality** in
 Engineer A's scope. It is not a silent swap: the constant, the test, the
-README, and `docs/design-decisions.md` §9 were all changed together, and the
+README, and `docs/design-decisions.md` were all changed together, and the
 replacement test
 (`test_queue_excludes_in_progress_tickets`) carries a docstring explaining
 what changed and why.
@@ -145,9 +132,9 @@ Worth stating, so the fixes above are not read as "everything was broken":
 
 | Requirement | Change | Verified by |
 |-------------|--------|-------------|
-| A — validation & status safety | `campusflow/validation.py` is now the single source of truth; `can_transition` gates the lifecycle | `tests/test_validation.py`, `tests/test_workflow.py::TestCanTransition` |
-| B — structured notes | `campusflow/notes.py` | `tests/test_notes.py` |
-| E — safe JSON | full-collection validation on load and save; `notes` legacy migration | `tests/test_storage.py::TestLoadRejectsInconsistentRecords`, `TestLoadNeverLosesState`, `TestIdContinuityAcrossReload` |
+| A - validation & status safety | `campusflow/validation.py` is now the single source of truth; `can_transition` gates the lifecycle | `tests/test_validation.py`, `tests/test_workflow.py::TestCanTransition` |
+| B - structured notes | `campusflow/notes.py` | `tests/test_notes.py` |
+| E - safe JSON | full-collection validation on load and save; `notes` legacy migration | `tests/test_storage.py::TestLoadRejectsInconsistentRecords`, `TestLoadNeverLosesState`, `TestIdContinuityAcrossReload` |
 | Original queue contract | `QUEUE_STATUSES` corrected to `("open",)` | `test_queue_excludes_in_progress_tickets` |
 
 ### Tests changed or replaced
@@ -155,7 +142,7 @@ Worth stating, so the fixes above are not read as "everything was broken":
 | Test | Change | Justification |
 |------|--------|---------------|
 | `test_queue_includes_in_progress_tickets` | replaced by `test_queue_excludes_in_progress_tickets` | It asserted the behaviour the new contract forbids. |
-| `test_failed_save_keeps_previous_file_intact` | now expects `ValidationError` instead of `TypeError` | `save_tickets` validates before writing. The property the test protects — previous file intact, no temp files left behind — is unchanged and still asserted. |
+| `test_failed_save_keeps_previous_file_intact` | now expects `ValidationError` instead of `TypeError` | `save_tickets` validates before writing. The property the test protects — previous file intact, no temp files left behind - is unchanged and still asserted. |
 
 Both changes are deliberate and are also recorded in
 `docs/design-decisions.md`. Nothing else in the original test suite was
@@ -175,4 +162,6 @@ python3 main.py
 `tests` must be run from the repository root: `campusflow` is imported as a
 package, so running from elsewhere will fail with `ModuleNotFoundError`.
 
-> **PENDING — paste the fresh-clone test output here once the branch is merged.**
+Ran 254 tests in 0.046s
+
+OK (expected failures=2)

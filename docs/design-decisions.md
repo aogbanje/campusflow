@@ -51,7 +51,7 @@ same read-only operation with a different ordering, so making search sort in
 place would corrupt the stored order for every other view.
 
 ## What does a blank filter mean?
-"Do not filter by this field" — not "match the empty string".
+"Do not filter by this field" - not "match the empty string".
 
 The two are easy to conflate and the mistake is quiet: treating a blank
 category as a value would match nothing and look like "no tickets found",
@@ -87,7 +87,7 @@ matching each other, and the transformation has to be applied consistently to
 both sides or the results become unpredictable. The suggestion and the reason
 for rejecting it are recorded in `docs/ai-learning-log.md`, Interaction 6.
 
-Pinned by `tests/test_search.py::test_punctuation_is_not_normalised_away` — a
+Pinned by `tests/test_search.py::test_punctuation_is_not_normalised_away` - a
 test whose purpose is to stop this being "fixed" later without a decision.
 
 ## Why was the original Open Work Queue left alone?
@@ -108,7 +108,7 @@ implied.
 So the menu can be tested without a human at a keyboard.
 
 A handler that calls `input()` directly can only be tested by typing, which
-means CLI behaviour is usually left untested — and the retry loops, which are
+means CLI behaviour is usually left untested - and the retry loops, which are
 exactly the code most likely to hide an infinite loop, are the least tested
 code in the project.
 

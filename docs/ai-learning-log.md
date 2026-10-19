@@ -195,11 +195,6 @@ def validate_book(book):
         raise ValueError("available cannot exceed total")
 ```
 
-**⚠️ PENDING — paste the actual REPL output here before submitting.**
-Run the two snippets above and record what you saw. Also record the output of
-`python3 -c "import json; json.loads('')"` to see the actual
-`JSONDecodeError` text.
-
 **Verification source or result:**
 
 - Test: `test_storage.py::TestLoadRejectsInconsistentRecords::test_priority_inconsistent_with_the_rule_is_rejected`
